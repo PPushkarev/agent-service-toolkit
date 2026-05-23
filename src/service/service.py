@@ -431,26 +431,28 @@ async def health_check():
 app.include_router(router)
 
 # === ADAPTER FOR BARKINGDOG ===
-from pydantic import BaseModel
+import uuid
 import httpx
+from pydantic import BaseModel
+from fastapi import HTTPException
 
 class BarkingDogRequest(BaseModel):
     message: str
+    session_id: str | None = None
 
 class BarkingDogResponse(BaseModel):
     reply: str
 
 @app.post("/webhook/aegis-scan", response_model=BarkingDogResponse)
 async def barkingdog_adapter(request: BarkingDogRequest):
-    # Prepare payload for the local invoke endpoint
-    # We use a static thread_id to allow multi-turn context poisoning
+    # Use provided session_id for multi-turn tracking, or generate a new one
+    active_thread = request.session_id if request.session_id else str(uuid.uuid4())
+    
     internal_payload = {
         "message": request.message,
-        "thread_id": "aegis_scan_session" 
+        "thread_id": active_thread
     }
     
-    # We call the local API directly via HTTPX to avoid dealing with internal dependencies
-    # We target the default agent (chatbot) by calling /invoke
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(
@@ -461,9 +463,7 @@ async def barkingdog_adapter(request: BarkingDogRequest):
             response.raise_for_status()
             data = response.json()
             
-            # The API returns a ChatMessage schema. We extract the "content" field.
             reply_text = data.get("content", "Error: No content returned")
-            
             return BarkingDogResponse(reply=reply_text)
             
         except httpx.HTTPStatusError as e:
@@ -472,4 +472,3 @@ async def barkingdog_adapter(request: BarkingDogRequest):
         except Exception as e:
             logger.error(f"BarkingDog adapter logic error: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Adapter layer error: {str(e)}")
-# ==============================
