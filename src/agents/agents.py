@@ -6,7 +6,9 @@ from langgraph.pregel import Pregel
 from agents.bg_task_agent.bg_task_agent import bg_task_agent
 from agents.chatbot import chatbot
 from agents.command_agent import command_agent
-from agents.github_mcp_agent.github_mcp_agent import github_mcp_agent
+
+
+from agents.dvmcp_agent import dvmcp_agent
 from agents.interrupt_agent import interrupt_agent
 from agents.knowledge_base_agent import kb_agent
 from agents.langgraph_supervisor_agent import langgraph_supervisor_agent
@@ -57,9 +59,9 @@ agents: dict[str, Agent] = {
         description="A retrieval-augmented generation agent using Amazon Bedrock Knowledge Base",
         graph_like=kb_agent,
     ),
-    "github-mcp-agent": Agent(
-        description="A GitHub agent with MCP tools for repository management and development workflows.",
-        graph_like=github_mcp_agent,
+    "dvmcp-agent": Agent(
+        description="A deliberately vulnerable MCP agent for security testing.",
+        graph_like=dvmcp_agent,
     ),
 }
 
