@@ -80,6 +80,16 @@ class Settings(BaseSettings):
 
     AUTH_SECRET: SecretStr | None = None
     MCP_DVMCP_SERVER_URL: str | None = None
+    MCP_DVMCP_CHALLENGE1_URL: str | None = None
+    MCP_DVMCP_CHALLENGE2_URL: str | None = None
+    MCP_DVMCP_CHALLENGE3_URL: str | None = None
+    MCP_DVMCP_CHALLENGE4_URL: str | None = None
+    MCP_DVMCP_CHALLENGE5_URL: str | None = None
+    MCP_DVMCP_CHALLENGE6_URL: str | None = None
+    MCP_DVMCP_CHALLENGE7_URL: str | None = None
+    MCP_DVMCP_CHALLENGE8_URL: str | None = None
+    MCP_DVMCP_CHALLENGE9_URL: str | None = None
+    MCP_DVMCP_CHALLENGE10_URL: str | None = None
 
     OPENAI_API_KEY: SecretStr | None = None
     DEEPSEEK_API_KEY: SecretStr | None = None
